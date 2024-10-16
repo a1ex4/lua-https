@@ -9,7 +9,7 @@ COPY . /src
 WORKDIR /src
 
 # RUN cmake -Bbuild -S. -DCMAKE_INSTALL_PREFIX=$PWD/install -DCMAKE_BUILD_TYPE=Release -DUSE_CURL_BACKEND=${{ matrix.mode.curl }} -DUSE_OPENSSL_BACKEND=${{ matrix.mode.openssl }}
-RUN cmake -Bbuild -S. -DCMAKE_INSTALL_PREFIX=$PWD/install -DCMAKE_BUILD_TYPE=Release -DUSE_CURL_BACKEND=1 -DUSE_OPENSSL_BACKEND=0
+RUN cmake -Bbuild -S. -DCMAKE_INSTALL_PREFIX=$PWD/install -DCMAKE_BUILD_TYPE=Release -DUSE_CURL_BACKEND=1 -DUSE_OPENSSL_BACKEND=1
 
 RUN cmake --build build --config Release --target install -j$(nproc)
 
