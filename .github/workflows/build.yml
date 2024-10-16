@@ -27,10 +27,10 @@ jobs:
 
       - name: Copy build artifact
         run: |
-          docker cp $(docker create --platform linux/arm64 lua-library-build):/src/install/https.so /home/runner/work/library/https.so
+          docker cp $(docker create --platform linux/arm64 lua-library-build):/src/install/https.so /tmp/https.so
   
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
           name: https-ubuntu.zip
-          path: /home/runner/work/library/*
+          path: /tmp/https.so
