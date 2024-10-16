@@ -24,10 +24,13 @@ jobs:
         run: |
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
           docker buildx build --platform linux/arm64 -t lua-library-build --output type=docker .
-      
-      - name: Artifact
-        if: matrix.mode.artifact == 1
-        uses: actions/upload-artifact@v4
+
+      - name: Copy build artifact
+        run: |
+          docker cp $(docker create --platform linux/arm64 lua-library-build):/src/install/./https.so /home/runner/work/library
+  
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
         with:
           name: https-ubuntu.zip
-          path: install/https.so
+          path: /home/runner/work/library/*
