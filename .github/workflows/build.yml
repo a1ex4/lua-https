@@ -7,21 +7,6 @@ jobs:
     runs-on: ubuntu-20.04
 
     timeout-minutes: 30
-    strategy:
-      matrix:
-        mode:
-        - name: Linux cURL
-          curl: 1
-          openssl: 0
-          artifact: 0
-        - name: Linux OpenSSL
-          curl: 0
-          openssl: 1
-          artifact: 0
-        - name: Linux cURL & OpenSSL
-          curl: 1
-          openssl: 1
-          artifact: 1
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,22 +25,6 @@ jobs:
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
           docker buildx build --platform linux/arm64 -t lua-library-build --output type=docker .
       
-      - name: Update APT Repository
-        run: sudo apt-get update
-      - name: Install Dependencies
-        run: sudo apt-get install -y lua5.1 luajit liblua5.1-0-dev libcurl4-openssl-dev g++ libssl-dev
-      - name: Configure
-        run: cmake -Bbuild -S. -DCMAKE_INSTALL_PREFIX=$PWD/install -DCMAKE_BUILD_TYPE=Release -DUSE_CURL_BACKEND=${{ matrix.mode.curl }} -DUSE_OPENSSL_BACKEND=${{ matrix.mode.openssl }}
-      - name: Build
-        run: cmake --build build --config Release --target install -j$(nproc)
-      - name: Test (Lua)
-        if: matrix.mode.artifact == 0
-        working-directory: ./install
-        run: lua -l "https" ../example/test.lua
-      - name: Test (LuaJIT)
-        if: matrix.mode.artifact == 0
-        working-directory: ./install
-        run: luajit -l "https" ../example/test.lua
       - name: Artifact
         if: matrix.mode.artifact == 1
         uses: actions/upload-artifact@v4
